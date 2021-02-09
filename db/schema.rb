@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_21_210339) do
+ActiveRecord::Schema.define(version: 2021_02_09_192304) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -411,8 +411,10 @@ ActiveRecord::Schema.define(version: 2020_11_21_210339) do
     t.datetime "completed_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "updated_by_id"
     t.index ["completed"], name: "index_software_feedbacks_on_completed"
     t.index ["created_by_id"], name: "index_software_feedbacks_on_created_by_id"
+    t.index ["updated_by_id"], name: "index_software_feedbacks_on_updated_by_id"
   end
 
   create_table "submission_responses", force: :cascade do |t|
@@ -575,6 +577,7 @@ ActiveRecord::Schema.define(version: 2020_11_21_210339) do
   add_foreign_key "shift_matches", "shifts"
   add_foreign_key "shifts", "people"
   add_foreign_key "shifts", "teams"
+  add_foreign_key "software_feedbacks", "users", column: "updated_by_id"
   add_foreign_key "submission_responses", "custom_form_questions"
   add_foreign_key "submission_responses", "submissions"
   add_foreign_key "submissions", "people"

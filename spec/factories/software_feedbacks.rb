@@ -30,9 +30,15 @@ end
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  created_by_id :bigint
+#  updated_by_id :bigint
 #
 # Indexes
 #
 #  index_software_feedbacks_on_completed      (completed)
 #  index_software_feedbacks_on_created_by_id  (created_by_id)
+#  index_software_feedbacks_on_updated_by_id  (updated_by_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (updated_by_id => users.id)
 #
