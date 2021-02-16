@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class AsksController < PublicController
-  include NotUsingPunditYet
-
   layout 'without_navbar', only: %i[new create]
 
   def index
@@ -17,7 +15,7 @@ class AsksController < PublicController
     submission = SubmissionForm.build submission_params
     if submission.save
       EmailNewSubmission.run! submission: submission, user: current_user
-      redirect_to contribution_thank_you_path, notice: 'Ask was successfully created.'
+      redirect_to thank_you_path, notice: 'Ask was successfully created.'
     else
       render_form(submission)
     end

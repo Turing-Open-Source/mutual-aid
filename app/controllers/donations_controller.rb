@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-class DonationsController < ApplicationController
-  include NotUsingPunditYet
-
+class DonationsController < AdminController
   before_action :authenticate_user!, except: %i[new create]
   before_action :set_donation, only: %i[show edit update destroy]
 
@@ -26,7 +24,7 @@ class DonationsController < ApplicationController
     @donation = Donation.new(donation_params)
 
     if @donation.save
-      redirect_to @admin_status ? donations_path : contribution_thank_you_path, notice: 'Donation was successfully created.'
+      redirect_to @admin_status ? donations_path : thank_you_path, notice: 'Donation was successfully created.'
     else
       set_form_dropdowns
       render :new

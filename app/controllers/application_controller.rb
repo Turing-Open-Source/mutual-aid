@@ -4,12 +4,14 @@ class ApplicationController < ActionController::Base
   include Authorization
 
   protect_from_forgery with: :exception
+
   before_action :authenticate_user!
   before_action :set_admin_status
   before_action :set_system_setting
   around_action :switch_locale
 
   def set_admin_status
+    # FIXME: replace uses of @admin_status with pundit
     @admin_status = params[:admin] ? YAML.load(params[:admin]) : current_user&.admin_role? # allows admin user to simulate with param=false
   end
 
@@ -26,6 +28,14 @@ class ApplicationController < ActionController::Base
   def default_url_options
     { locale: I18n.locale }
   end
+
+  def context
+    @context ||= Context.new(
+      user: current_user,
+      admin_param: params[:admin],
+    )
+  end
+  helper_method :context
 
   private
 

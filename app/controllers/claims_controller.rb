@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ClaimsController < ApplicationController
-  include NotUsingPunditYet
+  before_action { authorize :claim }
 
   def new
     contribution = Listing.find(params[:contribution_id])
@@ -11,7 +11,7 @@ class ClaimsController < ApplicationController
     end
     render locals: {
       contribution: contribution,
-      email: current_person&.email
+      email: current_user.email
     }
   end
 
@@ -20,12 +20,6 @@ class ClaimsController < ApplicationController
       contribution: params[:contribution_id],
       current_user: current_user
     ))
-    redirect_to contribution_path(params[:contribution_id]), notice: 'Claim was successful!'
-  end
-
-  private
-
-  def current_person
-    current_user.person
+    redirect_to contributions_path, notice: 'Claim was successful!'
   end
 end

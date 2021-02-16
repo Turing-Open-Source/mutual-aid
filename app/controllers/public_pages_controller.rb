@@ -1,29 +1,11 @@
 # frozen_string_literal: true
 
+# FIXME: Extract actions into separate controllers or consolidate with existing ones
 class PublicPagesController < PublicController
-  include NotUsingPunditYet
-
   layout :determine_layout
 
   def about
     @about_us_text = HtmlSanitizer.new(@system_setting.about_us_text).sanitize
-  end
-
-  def determine_layout
-    'without_navbar' unless @system_setting.display_navbar?
-  end
-
-  def announcements
-    @announcements = Announcement.where(is_approved: true).published
-    respond_to do |format|
-      format.html
-      format.json { render json: @announcements }
-    end
-  end
-
-  def community_resources
-    @admin_status = params[:admin] ? YAML.load(params[:admin]) : current_user&.admin_role?
-    @community_resources = CommunityResource.where(is_approved: true).published
   end
 
   def contributions
@@ -46,5 +28,11 @@ class PublicPagesController < PublicController
       status: version,
       color: 'blue'
     }
+  end
+
+  private
+
+  def determine_layout
+    'without_navbar' unless @system_setting.display_navbar?
   end
 end

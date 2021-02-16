@@ -1,23 +1,18 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  devise_for :users
 
-  # FIXME: drop controller override when the pundit work is ready, #514
-  devise_for :users, controllers: { registrations: 'registrations_sans_signup' }
+  scope '/admin' do
+    root to: 'admin_dashboard#show', as: 'admin_dashboard'
 
-  get '/admin',                    to: 'admin#landing_page',    as: 'landing_page_admin'
-  get '/admin/forms',              to: 'admin#form_admin',      as: 'form_admin'
-  get '/admin/volunteers',         to: 'admin#volunteer_admin', as: 'volunteer_admin'
-  get '/admin/dispatch',           to: 'admin#dispatch_steps',  as: 'dispatch_steps_admin'
-  get '/admin/glossary',           to: 'admin#glossary_index',  as: 'glossary_admin'
-  get '/admin/glossary_edit',      to: 'admin#glossary_edit',   as: 'glossary_admin_edit'
-  patch '/admin/glossary_edit',    to: 'admin#glossary_update', as: 'glossary_admin_update'
-  get '/admin/yearbook',           to: 'admin#yearbook',        as: 'yearbook_admin'
+    resource :volunteers,     only: [:show], controller: :volunteer_admin, as: 'volunteer_admin'
+    resource :dispatch_steps, only: [:show]
+    resource :yearbook,       only: [:show], controller: :yearbook
+  end
 
   get '/public',                   to: 'public_pages#landing_page',        as: 'landing_page_public'
   get '/about',                    to: 'public_pages#about',               as: 'about_public'
-  get '/announcements_list',       to: 'public_pages#announcements',       as: 'announcements_public'
-  get '/community_resources_list', to: 'public_pages#community_resources', as: 'community_resources_public'
   get '/version',                  to: 'public_pages#version',             as: 'version'
 
   resources :announcements
@@ -30,15 +25,8 @@ Rails.application.routes.draw do
   end
   resources :community_resources
   resources :contact_methods
-  get '/combined_form', to: 'contributions#combined_form', as: 'combined_form'
-  get '/thank_you', to: 'contributions#thank_you', as: 'contribution_thank_you'
-  resources :contributions, only: %i[index show] do
-    member do
-      get '/respond', to: 'contributions#respond', as: 'respond'
-      get '/triage', to: 'contributions#triage', as: 'triage'
-      patch '/triage', to: 'contributions#triage_update'
-      post '/triage', to: 'contributions#triage_update'
-    end
+  resource :thank_you, only: %i[show], controller: :thank_you
+  resources :contributions, except: %i[destroy] do
     resources :claims, only: %i[new create]
   end
   resources :custom_form_questions
@@ -77,7 +65,7 @@ Rails.application.routes.draw do
   resources :teams
   resources :users
 
-  resource :glossary, controller: :glossary, only: [:show]
+  resource :glossary, controller: :glossary, only: [:show, :edit, :update]
 
   root :to => 'public_pages#landing_page'
 end

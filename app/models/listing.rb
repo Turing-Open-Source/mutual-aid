@@ -51,7 +51,7 @@ class Listing < ApplicationRecord
   end
 
   def name
-    type + ": #{all_tags_to_s} (#{person.name})"
+    type + ": #{all_tags_to_s}"
   end
 
   def name_and_match_history
@@ -67,7 +67,7 @@ class Listing < ApplicationRecord
     elsif matches_as_provider.any?
       status = matches_as_provider.map{|m| m.completed?}.any? ? 'completed' : 'matched'
     end
-    update_attributes(state: status)
+    update(state: status)
     status
   end
 

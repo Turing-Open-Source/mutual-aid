@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-class ListingsController < ApplicationController
-  include NotUsingPunditYet
-
+class ListingsController < AdminController
   before_action :set_listing, only: %i[show edit update destroy match match_confirm]
 
   def index
@@ -71,7 +69,7 @@ class ListingsController < ApplicationController
   def create
     @listing = Listing.new(listing_params)
     if @listing.save
-      redirect_to contribution_thank_you_path, notice: 'Listing was successfully created.'
+      redirect_to thank_you_path, notice: 'Listing was successfully created.'
     else
       set_form_dropdowns
       render :new
